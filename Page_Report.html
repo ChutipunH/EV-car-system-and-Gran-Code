@@ -1,0 +1,140 @@
+<h5 class="mb-3 fw-bold">รายงานการอัดประจุไฟฟ้าสำหรับรถยนต์ไฟฟ้า (EV) ฝลพ.</h5>
+<form id="reportForm" onsubmit="handleFormSubmit(event, 'รายงานใช้รถ', 'reportBtn')">
+
+  <div class="row">
+    <div class="col-6 mb-3">
+      <label class="form-label">วันที่ชาร์จ</label>
+      <input type="date" class="form-control" id="SetDate" required>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">ชื่อผู้รายงาน</label>
+    <input type="text" class="form-control" id="repName"required placeholder="ระบุชื่อ-สกุล">
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">หน่วยงาน</label>
+    <input type="text" class="form-control" id="AgenName"required placeholder="ระบุชื่อ-สกุล">
+  </div>
+  
+  <div class="mb-3">
+    <label class="form-label">เลขไมล์ล่าสุด (ขณะชาร์จ)</label>
+    <input type="number" class="form-control" id="mileage" required>
+  </div>
+  
+  <div class="row">
+    <div class="col-6 mb-3">
+      <label class="form-label">% แบตก่อนชาร์จ</label>
+      <input type="number" class="form-control" id="battBefore" required>
+    </div>
+    <div class="col-6 mb-3">
+      <label class="form-label">% แบตหลังชาร์จ</label>
+      <input type="number" class="form-control" id="battAfter" required>
+    </div>
+  </div>
+
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="p-4 bg-light">
+
+  <div class="card p-4 mx-auto shadow-sm" style="max-width: 500px;">
+    <h5 class="mb-3 fw-bold">สถานีชาร์จ</h5>
+    
+    <form>
+      <!-- 1. Dropdown หลัก (เลือก A หรือ B) -->
+      <div class="mb-3">
+        <label class="form-label">เครือข่ายสถานีชาร์จ</label>
+        <select class="form-select" id="primarySelect" onchange="updateSecondaryDropdown()">
+          <option value="">-- กรุณาเลือก --</option>
+          <option value="A">สถานีชาร์จในเครือข่าย PEA Volta</option>
+          <option value="B">สถานีชาร์จนอกเครือข่าย PEA Volta</option>
+        </select>
+      </div>
+
+      <!-- 2. Dropdown รอง (C, D หรือ E, F) -->
+      <div class="mb-3">
+        <label class="form-label">โปลดเลือกรายละเอียด</label>
+        <!-- เพิ่ม onchange เพื่อไปสั่งงาน Text Box -->
+        <select class="form-select" id="secondarySelect" onchange="handleTextBox()" disabled>
+          <option value="">-- กรุณาเลือกเครือข่ายสถานีชาร์จ --</option>
+        </select>
+      </div>
+
+      <!-- 3. Text Box ที่จะเปลี่ยนสถานะตามตัวเลือกรอง -->
+      <div class="mb-3">
+        <label class="form-label">ข้อมูลเพิ่มเติม</label>
+        <input type="text" class="form-control" id="extraTextBox" disabled placeholder="--กรุณาเลือกเครื่อข่ายสถานีชาร์จ--">
+      </div>
+    </form>
+  </div>
+
+  <script>
+    // ฟังก์ชันที่ 1: อัปเดต Dropdown ตัวที่ 2 (เหมือนเดิม)
+    function updateSecondaryDropdown() {
+      const primaryValue = document.getElementById("primarySelect").value;
+      const secondarySelect = document.getElementById("secondarySelect");
+      
+      // ล้างข้อมูลกล่องสอง
+      secondarySelect.innerHTML = '<option value="">-- กรุณาเลือก --</option>';
+
+      if (primaryValue === "A") {
+        secondarySelect.disabled = false;
+        secondarySelect.innerHTML += '<option value="C">กฟภ. สำนักงานใหญ่</option>';
+        secondarySelect.innerHTML += '<option value="D">กฟภ. (เขต, จังหวัด)</option>';
+        secondarySelect.innerHTML += '<option value="E">ปั้มน้ำมันบางจาก</option>';
+        secondarySelect.innerHTML += '<option value="F">PEA Volta</option>';
+
+      } else if (primaryValue === "B") {
+        secondarySelect.disabled = false;
+        secondarySelect.innerHTML += '<option value="G">Well charge</option>';
+        secondarySelect.innerHTML += '<option value="H">สถานีชาร์จอื่น ๆ</option>';
+      } else {
+        secondarySelect.disabled = true;
+        secondarySelect.innerHTML = '<option value="">-- กรุณาเลือกเครือข่ายสถานีชาร์จ --</option>';
+      }
+
+      // **สำคัญ:** เมื่อเปลี่ยนกลุ่มหลัก ต้องรีเซ็ต Text Box กลับไปค่าเริ่มต้นด้วย
+      handleTextBox(); 
+    }
+
+    // ฟังก์ชันที่ 2: จัดการ Text Box ตามค่าของ Dropdown ตัวที่ 2
+    function handleTextBox() {
+      const secondaryValue = document.getElementById("secondarySelect").value;
+      const textBox = document.getElementById("extraTextBox");
+
+      if (secondaryValue === "C") {
+        // เงื่อนไข: ถ้าเป็น C ให้ใส่ข้อความ "C" และล็อคไม่ให้พิมพ์ (readOnly)
+        textBox.value = "กฟภ. สำนักงานใหญ่";
+        textBox.readOnly = true; 
+        textBox.disabled = false; // ปลด disabled เพื่อให้เห็นสีชัดเจน แต่พิมพ์ไม่ได้เพราะ readOnly
+        textBox.required = false; // ไม่ต้องบังคับกรอกเพิ่ม เพราะใส่ให้แล้ว
+        
+      } else if (secondaryValue !== "") {
+        // เงื่อนไข: ถ้าเป็น C, D, F (ไม่ใช่ค่าว่าง) ปลดล็อค ล้างค่า และบังคับกรอก
+        textBox.value = "";
+        textBox.readOnly = false;
+        textBox.disabled = false;
+        textBox.required = true; // บังคับว่าผู้ใช้ต้องพิมพ์ (ถ้าไม่พิมพ์จะกดปุ่ม submit ไม่ผ่าน)
+        textBox.placeholder = "กรุณากรอกข้อมูล (บังคับ)";
+        
+      } else {
+        // เงื่อนไข: ถ้ายังไม่เลือกตัวเลือกย่อย ให้ล็อค Text Box เอาไว้
+        textBox.value = "";
+        textBox.readOnly = false;
+        textBox.disabled = true;
+        textBox.required = false;
+        textBox.placeholder = "กรุณาเลือกตัวเลือกข้อก่อนหน้าก่อน";
+      }
+    }
+  </script>
+
+</body>
+</html>
+
+  <button type="submit" class="btn btn-primary w-100 py-2 mt-2" id="reportBtn">ส่งรายงาน</button>
+  </form>
+  

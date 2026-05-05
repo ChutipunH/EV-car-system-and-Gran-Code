@@ -1,0 +1,61 @@
+<h5 class="mb-3 fw-bold">ระบบการจองรถยนต์ EV ฝลพ.</h5>
+<form id="bookingForm" onsubmit="handleFormSubmit(event, 'จองรถ EV', 'bookingBtn')">
+
+<!-- 🟢 ส่วนแสดงปฏิทินแบบดึงจาก Google Calendar โดยตรง -->
+<div class="mb-4">
+  <label class="form-label fw-bold text-primary">📅 ตรวจสอบตารางคิวรถ</label>
+  
+  <!-- ปรับ ratio เป็น 4x3 เพื่อให้ดูปฏิทินได้เต็มตาขึ้นในพื้นที่จำกัด -->
+  <div class="ratio ratio-4x3 border rounded overflow-hidden shadow-sm" style="max-height: 500px;">
+    <!-- ใส่ลิงก์ Google Calendar ที่ดึงมาจากรูปภาพของคุณโดยตรง -->
+    <iframe 
+      src="https://calendar.google.com/calendar/embed?src=dce80de3d80222989aaa3ba51b594063c47165f127d56464e46ad60f372713b5%40group.calendar.google.com&ctz=Asia%2FBangkok" 
+      style="border: 0" 
+      frameborder="0" 
+      scrolling="no">
+    </iframe>
+  </div>
+  
+  <div class="form-text text-muted mt-1">
+    <small>📢 โปรดตรวจสอบคิวรถว่าว่างตรงกับวันที่ท่านต้องการหรือไม่ ก่อนกดทำการจอง ❗️</small>
+  </div>
+</div>
+<hr>
+  
+  <div class="mb-3">
+    <label class="form-label">ชื่อผู้จอง</label>
+    <input type="text" class="form-control" id="bookName" required placeholder="ระบุชื่อ-สกุล">
+  </div>
+  
+  <div class="mb-3">
+    <label class="form-label">หน่วยงาน</label>
+    <input type="text" class="form-control" id="bookName" required placeholder="ระบุหน่วยงานของท่าน">
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">เลือกรถยนต์ EV ที่ต้องการจอง</label>
+    <select class="form-select" id="bookCar">
+      <option value="Select">Select</option>
+      <option value="6ขฆ-5711">ทะเบียน 6ขฆ-5711</option>
+      <option value="6ขฆ-5714">ทะเบียน 6ขฆ-5714</option>
+    </select>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">สถานที่เดินทางไปปฏิบัติงาน</label>
+    <input type="text" class="form-control" id="bookName" required placeholder="ระบุสถานที่เดินทางไปปฏิบัติงาน">
+  </div>
+  
+  <div class="row">
+    <div class="col-6 mb-3">
+      <label class="form-label">วันที่ไป</label>
+      <input type="date" class="form-control" id="startDate" required>
+    </div>
+    <div class="col-6 mb-3">
+      <label class="form-label">วันที่กลับ</label>
+      <input type="date" class="form-control" id="endDate" required>
+    </div>
+  </div>
+  
+  <button type="submit" class="btn btn-primary w-100 py-2 mt-2" id="bookingBtn">ยืนยันการจอง</button>
+</form>
