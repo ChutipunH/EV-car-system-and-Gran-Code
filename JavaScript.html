@@ -1,35 +1,43 @@
 <script>
   // ฟังก์ชันส่วนกลางสำหรับจัดการเมื่อมีการกดปุ่ม "Submit" จากฟอร์มไหนก็ได้
   function handleFormSubmit(event, actionName, btnId) {
-    event.preventDefault(); // ป้องกันไม่ให้หน้าเว็บกระพริบ (Refresh)
-    
+    event.preventDefault();
+
     const btn = document.getElementById(btnId);
     const originalText = btn.innerHTML;
-    
-    // 1. เปลี่ยนหน้าตาปุ่มเป็นกำลังโหลด
+
     btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> ประมวลผล...';
     btn.disabled = true;
 
-    // 2. ดึงค่าชื่อจากฟอร์มที่กำลังใช้งานอยู่
-    let userName = "";
-    if(actionName === 'จองรถ EV') userName = document.getElementById('bookName').value;
-    if(actionName === 'รายงานใช้รถ') userName = document.getElementById('repName').value;
-    if(actionName === 'ขอโค้ด Grab') userName = document.getElementById('grabName').value;
+    let payload = { action: actionName };
 
-    // แพ็กข้อมูลเตรียมส่ง
-    const payload = { action: actionName, name: userName };
+    if (actionName === 'จองรถ EV') {
+      payload.name        = document.getElementById('bookName').value;
+      payload.dept        = document.getElementById('bookDept').value;
+      payload.carRegis    = document.getElementById('bookCar').value;
+      payload.destination = document.getElementById('bookDestination').value;
+      payload.startDate   = document.getElementById('startDate').value;
+      payload.endDate     = document.getElementById('endDate').value;
+    } else if (actionName === 'รายงานใช้รถ') {
+      payload.name           = document.getElementById('repName').value;
+      payload.chargeDate     = document.getElementById('SetDate').value;
+      payload.dept           = document.getElementById('AgenName').value;
+      payload.mileage        = document.getElementById('mileage').value;
+      payload.battBefore     = document.getElementById('battBefore').value;
+      payload.battAfter      = document.getElementById('battAfter').value;
+      payload.stationNetwork = document.getElementById('primarySelect').value;
+      payload.stationDetail  = document.getElementById('secondarySelect').value;
+      payload.extraInfo      = document.getElementById('extraTextBox').value;
+    }
 
-    // 3. ส่งข้อมูลไปให้ฟังก์ชัน submitData ในไฟล์ Code.gs
     google.script.run
       .withSuccessHandler(function(response) {
-        // เมื่อทำงานหลังบ้านเสร็จ ให้คืนค่าปุ่มกลับมา
         btn.innerHTML = originalText;
         btn.disabled = false;
 
-        // แสดงแจ้งเตือนผลลัพธ์
         if(response.status === "success") {
           Swal.fire('สำเร็จ!', response.message, 'success');
-          event.target.reset(); // ล้างข้อมูลที่กรอกไว้ในฟอร์ม
+          event.target.reset();
         } else {
           Swal.fire('เกิดข้อผิดพลาด!', response.message, 'error');
         }

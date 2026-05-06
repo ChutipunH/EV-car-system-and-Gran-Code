@@ -13,19 +13,60 @@ function include(filename) {
   return HtmlService.createHtmlOutputFromFile(filename).getContent();
 }
 
-// ฟังก์ชันรับข้อมูลจากหน้าเว็บ (รับค่ามาจาก JavaScript.html)
-function submitData(data) {
-  // จำลองการประมวลผล (ดีเลย์ 1 วินาที)
-  Utilities.sleep(1000); 
-  
-  // -- ในอนาคต คุณสามารถเขียนคำสั่งบันทึกข้อมูลลง Google Sheets ตรงนี้ได้เลย --
-  Logger.log("ได้รับข้อมูลจากเมนู: " + data.action + " | โดย: " + data.name);
+// ฟังก์ชันแปลงวันที่ ค.ศ. เป็น พ.ศ.
+function formatToBE(dateObj) {
+  if (!dateObj) return "";
+  let d = new Date(dateObj);
+  let day = d.getDate();
+  let month = d.getMonth() + 1;
+  let yearBE = d.getFullYear() + 543;
+  return day + "/" + month + "/" + yearBE;
+}
 
-  // ส่งผลลัพธ์กลับไปบอกหน้าเว็บว่าสำเร็จ
-  return { 
-    status: "success", 
-    message: "บันทึกข้อมูลการ " + data.action + " เรียบร้อยแล้ว!" 
-  };
+// ฟังก์ชันรับข้อมูลจากหน้าเว็บและบันทึกลง Google Sheets
+function submitData(data) {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const timestamp = new Date();
+
+    if (data.action === 'จองรถ EV') {
+      const sheet = ss.getSheetByName('EV_Bookings');
+      const bookingId = 'BK' + timestamp.getTime();
+      sheet.appendRow([
+        bookingId,
+        timestamp,
+        data.name,
+        data.carRegis,
+        data.startDate ? new Date(data.startDate) : '',
+        data.endDate   ? new Date(data.endDate)   : '',
+        'จอง',
+        ''
+      ]);
+
+    } else if (data.action === 'รายงานใช้รถ') {
+      const sheet = ss.getSheetByName('EV_Reports');
+      sheet.appendRow([
+        timestamp,
+        data.chargeDate ? new Date(data.chargeDate) : '',
+        data.name,
+        data.dept,
+        data.mileage,
+        data.battBefore,
+        data.battAfter,
+        data.stationNetwork,
+        data.stationDetail,
+        data.extraInfo
+      ]);
+    }
+
+    return {
+      status: "success",
+      message: "บันทึกข้อมูลการ " + data.action + " เรียบร้อยแล้ว!"
+    };
+  } catch (e) {
+    Logger.log(e);
+    return { status: "error", message: "เกิดข้อผิดพลาด กรุณาลองใหม่" };
+  }
 }
 
 // --- ฟังก์ชันค้นหาพนักงานจาก Sheet: Employees ---
@@ -67,16 +108,6 @@ function processGrabRequest(payload) {
     // รวมโค้ดเป็นข้อความ (กรณีได้ 2 โค้ด จะมีลูกน้ำคั่น)
     const codeString = givenCodes.join(", ");
 
-    // ฟังก์ชันเสริมสำหรับแปลงวันที่ ค.ศ. เป็น พ.ศ.
-function formatToBE(dateObj) {
-  if (!dateObj) return "";
-  let d = new Date(dateObj);
-  let day = d.getDate();
-  let month = d.getMonth() + 1;
-  let yearBE = d.getFullYear() + 543; // บวก 543 ให้เป็น พ.ศ.
-  return day + "/" + month + "/" + yearBE;
-}
-    
     // บันทึกลง Sheet ประวัติการใช้งาน [เวลา, ชื่อ, สถานที่, โค้ด, รหัสพนักงาน]
     usedSheet.appendRow([new Date(), payload.name, payload.location, codeString, payload.empId]);
 
