@@ -1,8 +1,8 @@
-<h5 class="mb-3 fw-bold">🎟️ ขอรับโค้ด Grab</h5>
+<h5 class="mb-3 fw-bold">🎟️ ขอรับ Code Grab</h5>
 
 <!-- กล่องข้อความแนะนำ -->
 <div class="alert alert-info py-2 mb-4" role="alert">
-  <small>💡 กรุณาระบุรหัสพนักงาน 6 หลักเพื่อตรวจสอบสิทธิ์ หากรหัสถูกต้อง ระบบจะแสดงชื่อและเปิดให้เบิกโค้ด</small>
+  <small>💡 กรุณาระบุรหัสพนักงาน 6 หลักเพื่อตรวจสอบสิทธิ์ หากรหัสถูกต้อง ระบบจะแสดงชื่อและเปิดให้ใช้ Code Grab 🎫</small>
 </div>
 
 <!-- เปลี่ยนไปใช้ฟังก์ชัน submitGrabForm แทนของเดิมที่ใช้ร่วมกัน -->
@@ -12,7 +12,7 @@
   <div class="mb-3">
     <label class="form-label fw-bold">รหัสพนักงาน (6 หลัก) <span class="text-danger">*</span></label>
     <div class="input-group">
-      <input type="text" class="form-control" id="empId" required maxlength="6" pattern="\d{6}" placeholder="เช่น 123456">
+      <input type="text" class="form-control" id="empId" required maxlength="6" pattern="\d{6}" placeholder="กรุณาใส่รหัสพนักงาน PEA">
       <button class="btn btn-outline-primary" type="button" id="btnCheckId" onclick="verifyId()">ตรวจสอบสิทธิ์</button>
     </div>
   </div>
@@ -31,21 +31,21 @@
       <label class="form-label fw-bold">ประเภทการเดินทาง <span class="text-danger">*</span></label>
       <select class="form-select" id="tripType" required>
         <option value="">-- กรุณาเลือก --</option>
-        <option value="1">เที่ยวเดียว (เบิก 1 โค้ด)</option>
-        <option value="2">ไป-กลับ (เบิก 2 โค้ด)</option>
+        <option value="1">เที่ยวเดียว (1 โค้ด)</option>
+        <option value="2">ไป-กลับ (2 โค้ด)</option>
       </select>
     </div>
 
     <!-- 4. สถานที่ปฏิบัติงาน -->
     <div class="mb-3">
       <label class="form-label fw-bold">สถานที่ปฏิบัติงาน <span class="text-danger">*</span></label>
-      <input type="text" class="form-control" id="location" required placeholder="เช่น สำนักงานใหญ่, หน้างาน กทม.">
+      <input type="text" class="form-control" id="location" required placeholder="เช่น หน้างาน กทม.">
     </div>
     
     <hr class="my-4">
     
     <button type="submit" class="btn btn-primary w-100 py-2" id="grabBtn">
-      🎁 ยืนยันการเบิกโค้ด
+      🚙 ยืนยันการเบิกโค้ด 🎟️ ✅
     </button>
   </fieldset>
   

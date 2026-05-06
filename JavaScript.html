@@ -11,13 +11,24 @@
 
     let payload = { action: actionName };
 
-    if (actionName === 'จองรถ EV') {
-      payload.name        = document.getElementById('bookName').value;
-      payload.dept        = document.getElementById('bookDept').value;
-      payload.carRegis    = document.getElementById('bookCar').value;
-      payload.destination = document.getElementById('bookDestination').value;
-      payload.startDate   = document.getElementById('startDate').value;
-      payload.endDate     = document.getElementById('endDate').value;
+    // ดึงข้อมูลตามประเภทของฟอร์มที่กด
+    if(actionName === 'จองรถ EV') {
+      payload.name = document.getElementById('bookName').value;
+      payload.dept = document.getElementById('bookDept').value; // 🟢 ดึงค่าหน่วยงาน
+      payload.carPlate = document.getElementById('bookCar').value;
+      payload.destination = document.getElementById('bookDestination').value; // 🟢 ดึงค่าสถานที่
+      payload.startDate = document.getElementById('startDate').value;
+      payload.endDate = document.getElementById('endDate').value;
+
+      // 🔴 เช็คก่อนส่ง: ถ้ายังไม่ได้เลือกรถ (เป็นค่า Select) ให้เด้งเตือน
+      if (payload.carPlate === "Select") {
+         Swal.fire('แจ้งเตือน', 'กรุณาเลือกรถยนต์ EV ที่ต้องการจอง', 'warning');
+         btn.innerHTML = originalText;
+         btn.disabled = false;
+         return; // หยุดการทำงาน ไม่ส่งไปหลังบ้าน
+      
+    } 
+    // ... (โค้ดส่วนรายงานใช้รถเหมือนเดิม) ...
     } else if (actionName === 'รายงานใช้รถ') {
       payload.name           = document.getElementById('repName').value;
       payload.chargeDate     = document.getElementById('SetDate').value;
