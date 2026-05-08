@@ -104,10 +104,23 @@ function handleBooking(payload) {
       payload.destination
     ]);
 
+    // แจ้งเตือน LINE OA เมื่อจองสำเร็จ
+    try {
+      sendBookingAlert({
+        bookerName:   payload.name,
+        licensePlate: payload.carPlate,
+        startDate:    new Date(payload.startDate),
+        returnDate:   new Date(payload.endDate),
+        location:     payload.destination
+      });
+    } catch (lineErr) {
+      Logger.log('[LINE] handleBooking notification error: ' + lineErr.message);
+    }
+
     // ส่งสถานะ success กลับไปที่ Web เพื่อแสดงแจ้งเตือนว่าสำเร็จ
-    return { 
-      status: "success", 
-      message: `จองรถ ${payload.carPlate} สำเร็จเรียบร้อยแล้ว!` 
+    return {
+      status: "success",
+      message: `จองรถ ${payload.carPlate} สำเร็จเรียบร้อยแล้ว!`
     };
 
   } catch(e) {
@@ -133,6 +146,22 @@ function handleReport(payload) {
       payload.stationDetail,
       payload.extraInfo
     ]);
+
+    // แจ้งเตือน LINE OA เมื่อบันทึกรายงานสำเร็จ
+    try {
+      sendChargingAlert({
+        date:          payload.chargeDate ? new Date(payload.chargeDate) : new Date(),
+        name:          payload.name,
+        department:    payload.dept,
+        mileage:       Number(payload.mileage) || 0,
+        batteryBefore: Number(payload.battBefore) || 0,
+        batteryAfter:  Number(payload.battAfter)  || 0,
+        locationInfo:  [payload.stationNetwork, payload.stationDetail, payload.extraInfo]
+                         .filter(Boolean).join(' / ') || '-'
+      });
+    } catch (lineErr) {
+      Logger.log('[LINE] handleReport notification error: ' + lineErr.message);
+    }
 
     return { status: "success", message: `บันทึกข้อมูลการ ${payload.action} เรียบร้อยแล้ว!` };
   } catch (e) {
@@ -177,6 +206,18 @@ function processGrabRequest(payload) {
 
     usedSheet.appendRow([new Date(), payload.name, payload.location, codeString, payload.empId]);
     poolSheet.deleteRows(2, requiredCodes);
+
+    // แจ้งเตือน LINE OA เมื่อแจก Grab Code สำเร็จ
+    try {
+      sendGrabCodeAlert({
+        employeeId: payload.empId,
+        name:       payload.name,
+        location:   payload.location,
+        codeCount:  requiredCodes
+      });
+    } catch (lineErr) {
+      Logger.log('[LINE] processGrabRequest notification error: ' + lineErr.message);
+    }
 
     return {
       status: "success",
